@@ -7,7 +7,7 @@ NTSTATUS hook_via_data_ptr(
     UINT32 pattern_offset,
     PUCHAR target_process_name, 
     PVOID hook_function, 
-    PVOID original
+    PVOID* original
 )
 {
     PEPROCESS target_process        = 0x0;
@@ -57,7 +57,7 @@ NTSTATUS hook_via_data_ptr(
     printf("target_process_id valid: %llu", target_process_id);
 
     KeAttachProcess(target_process);
-    *(void**)&original = _InterlockedExchangePointer((PVOID*)data_ptr, (PVOID)hook_function);
+    *original = _InterlockedExchangePointer((PVOID*)data_ptr, (PVOID)hook_function);
     KeDetachProcess();
     printf("finished hooking, returning");
 

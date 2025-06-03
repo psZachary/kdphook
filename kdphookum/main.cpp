@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <iostream>
+#include "ipc.hpp"  // Ensure ipc.hpp is included BEFORE using IPC_COMM_OPERATION
 
 int main() {
     // Load the win32u.dll module
@@ -18,7 +19,6 @@ int main() {
         return 1;
     }
 
-    std::cout << "procAddress: " << std::hex << procAddress << std::endl;
 
     // https://ntdoc.m417z.com/ntusercalculatepopupwindowposition
     using NtUserCalculatePopupWindowPosition_t = BOOL(NTAPI*)(
@@ -27,18 +27,16 @@ int main() {
         _In_ ULONG flags,
         _Inout_ RECT* excludeRect,
         _Inout_ RECT* popupWindowPosition
+        );
+
+    using NtHookIPC_t = BOOL(NTAPI*)(
+        _In_    const IPC_COMM_SECRET secret
     );
-    POINT p{ 10, 10 };
-    SIZE f{ 10, 10 };
 
-    RECT z;
-    GetWindowRect(GetActiveWindow(), &z);
-    RECT x;
-    __int64 result = reinterpret_cast<NtUserCalculatePopupWindowPosition_t>(procAddress)(&p, &f, 6969, &z, &x);
-    std::cout << "Function returned: " << std::hex << result << std::endl;
 
+   
+    __int64 result = reinterpret_cast<NtHookIPC_t>(procAddress)(6969);
+    printf("%d", result);
     FreeLibrary(moduleHandle);
-
     return 0;
 }
-

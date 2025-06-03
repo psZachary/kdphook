@@ -1,10 +1,11 @@
-#pragma once
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <ntifs.h>
 #include <ntstrsafe.h>
 
 #define printf(...) DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, __VA_ARGS__);
-#define isbadkptr(ptr) (!ptr || (ULONGLONG)ptr < 0xFFFF || (ULONGLONG)ptr < 0xFFFF000000000000)
+#define isbadkptr(ptr) (!ptr || (ULONGLONG)ptr < 0xFFFF000000000000)
 
 
 static PVOID utils_find_pattern(PVOID base, SIZE_T srch_len, const UCHAR* pattr, SIZE_T pattr_size) {
@@ -108,3 +109,5 @@ static NTSTATUS utils_find_process(PUCHAR process_name, PEPROCESS* process)
 
     return STATUS_NOT_FOUND;
 }
+
+#endif
