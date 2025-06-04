@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ipc.hpp">
+    <ClInclude Include="driver.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

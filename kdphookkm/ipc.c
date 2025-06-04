@@ -15,12 +15,18 @@ int NTAPI NtUserCalculatePopupWindowPosition_hk(
     DbgPrint("c: 0x%i\n", c);
     DbgPrint("d: 0x%llx\n", d);
     DbgPrint("e: 0x%llx\n", e);
-  
-    BOOL result = FALSE;
-    if (NtUserCalculatePopupWindowPosition_o)
-        result = NtUserCalculatePopupWindowPosition_o(a, b, c, d, e);
 
-    return result;
+    if ((IPC_COMM_SECRET)c == comm_secret) {
+        if (!a) return IPC_COMM_FAILURE;
+        IPC_COMM* comm = (IPC_COMM*)a;
+
+        if (comm->type == BASIC_REPEAT_SECRET)
+            return comm_secret;
+
+        return IPC_COMM_SUCCESS;
+    }
+    
+    return NtUserCalculatePopupWindowPosition_o(a, b, c, d, e);
 }
 
 NTSTATUS start_ipc(IPC_COMM_SECRET ipc_comm_secret) {

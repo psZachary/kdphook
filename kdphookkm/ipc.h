@@ -4,9 +4,20 @@
 #include "hook.h"
 #include <windef.h>
 
-#define printf(...) DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, __VA_ARGS__);
+typedef unsigned int IPC_COMM_SECRET, PID;
 
-typedef unsigned long IPC_COMM_SECRET;
+typedef enum _IPC_COMM_TYPE {
+    SETUP,
+    BASIC_REPEAT_SECRET,
+    PHYSICAL_WRITE,
+    PHYSICAL_READ
+} IPC_COMM_TYPE;
+
+typedef struct _IPC_COMM {
+    PID pid;
+    IPC_COMM_TYPE type;
+} IPC_COMM, *PIPC_COMM;
+
 #define IPC_COMM_SUCCESS 1;
 #define IPC_COMM_FAILURE 0;
 
