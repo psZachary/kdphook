@@ -147,9 +147,11 @@
     <ClCompile Include="entry.c" />
     <ClCompile Include="hook.c" />
     <ClCompile Include="ipc.c" />
+    <ClCompile Include="mem.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ipc.h" />
+    <ClInclude Include="mem.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="hook.h" />
   </ItemGroup>

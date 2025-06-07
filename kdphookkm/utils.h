@@ -3,10 +3,10 @@
 
 #include <ntifs.h>
 #include <ntstrsafe.h>
+#include <intrin.h>
 
 #define printf(...) DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, __VA_ARGS__);
 #define isbadkptr(ptr) (!ptr || (ULONGLONG)ptr < 0xFFFF000000000000)
-
 
 static PVOID utils_find_pattern(PVOID base, SIZE_T srch_len, const UCHAR* pattr, SIZE_T pattr_size) {
     UCHAR* s = (UCHAR*)base;
@@ -109,5 +109,32 @@ static NTSTATUS utils_find_process(PUCHAR process_name, PEPROCESS* process)
 
     return STATUS_NOT_FOUND;
 }
+
+static NTSTATUS utils_find_process_pid(UINT64 pid, PEPROCESS* process)
+{
+    PEPROCESS sys_process = PsInitialSystemProcess;
+    PEPROCESS curr_entry = sys_process;
+
+    UINT64 upid = 0;
+    do {
+        RtlCopyMemory((PVOID)(&upid), (PVOID)((uintptr_t)curr_entry + 0x440), sizeof(upid));
+
+        if (pid == upid) {
+            DWORD active_threads;
+            RtlCopyMemory((PVOID)&active_threads, (PVOID)((uintptr_t)curr_entry + 0x5f0), sizeof(active_threads));
+            if (active_threads) {
+                *process = curr_entry;
+                return STATUS_SUCCESS;
+            }
+        }
+
+        PLIST_ENTRY list = (PLIST_ENTRY)((uintptr_t)(curr_entry)+0x448);
+        curr_entry = (PEPROCESS)((uintptr_t)list->Flink - 0x448);
+
+    } while (curr_entry != sys_process);
+
+    return STATUS_NOT_FOUND;
+}
+
 
 #endif

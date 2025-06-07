@@ -6,22 +6,28 @@ int (NTAPI* NtUserCalculatePopupWindowPosition_o)(unsigned long long, unsigned l
 int NTAPI NtUserCalculatePopupWindowPosition_hk(
     unsigned long long a,
     unsigned long long b,
-    unsigned int c,
+    unsigned int       c,
     unsigned long long d,
     unsigned long long e
 ) {
-    DbgPrint("a: 0x%llx\n", a);
-    DbgPrint("b: 0x%llx\n", b);
-    DbgPrint("c: 0x%i\n", c);
-    DbgPrint("d: 0x%llx\n", d);
-    DbgPrint("e: 0x%llx\n", e);
+    IPC_COMM_SECRET secret = (IPC_COMM_SECRET)c;
+    IPC_COMM* comm = (IPC_COMM*)a;
 
-    if ((IPC_COMM_SECRET)c == comm_secret) {
-        if (!a) return IPC_COMM_FAILURE;
-        IPC_COMM* comm = (IPC_COMM*)a;
+    if (secret == comm_secret) {
+        if (!comm) return IPC_COMM_FAILURE;
 
         if (comm->type == BASIC_REPEAT_SECRET)
             return comm_secret;
+
+        if (comm->type == READ_PROCESS) {
+            if (!comm->pid || !comm->addr_from || !comm->addr_to) return IPC_COMM_FAILURE;
+            mem_read_process_memory(comm->pid, (PVOID)comm->addr_from, (PVOID)comm->addr_to, comm->size, 0);
+        }
+
+        if (comm->type == WRITE_PROCESS) {
+            if (!comm->pid || !comm->addr_from || !comm->addr_to) return IPC_COMM_FAILURE;
+            mem_write_process_memory(comm->pid, (PVOID)comm->addr_to, (PVOID)comm->addr_from, comm->size, 0);
+        }
 
         return IPC_COMM_SUCCESS;
     }

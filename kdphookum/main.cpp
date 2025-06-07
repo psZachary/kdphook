@@ -23,7 +23,12 @@ int main() {
         exit(1);
     }
 
-    printf("success");
+    char buffer[64]{};
+    drv->attach(9228);
+    drv->read_process_memory(0x7ff62e090000, &buffer[0], sizeof(buffer));
+
+    printf("buffer: %s", buffer);
+
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     return 0;
