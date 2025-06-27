@@ -44,4 +44,7 @@ int main() {
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     return 0;
-}```
+}
+```
+### Credits
+https://www.unknowncheats.me/forum/anti-cheat-bypass/444289-read-process-physical-memory-attach.html
