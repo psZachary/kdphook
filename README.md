@@ -1,6 +1,6 @@
 # kdphook
 ### Warning
-Any anti-cheat or anti-malware program can detect this driver running in unsigned memory through NMI callbacks / stack walks (if mapped to unsigned memory), this can be circumvented by signing the driver with a cert. 
+Any anti-cheat or anti-malware program can detect this driver running in unsigned memory through NMI callbacks / stack walks (if mapped to unsigned memory), this can be circumvented by signing the driver with a cert or fancy method to make the stack look legit. 
 ### Usage Example
 ```c++
 #include <Windows.h>
